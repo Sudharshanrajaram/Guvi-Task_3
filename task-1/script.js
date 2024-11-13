@@ -62,6 +62,7 @@ function genBoard(){
         card.setAttribute('data-id', i);
         card.addEventListener("click", flipCard);
         gridDisplay.appendChild(card);
+        
     }
     console.log(cardArray);
 }
