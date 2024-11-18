@@ -8,7 +8,7 @@ const Slider = () => {
 
 	return (
 		<div my={{ base: "10px", sm: "10px", md: "20px", lg: "30px" }} className="px-4 py-3 bg-[#FFE1FF] " >
-			<Carousel showThumbs={false} autoPlay={true} infiniteLoop={true} showStatus={false} showArrows={true} showIndicators={true} stopOnHover={true} transitionTime={200} >
+			<Carousel showThumbs={false} autoPlay={true} infiniteLoop={true} showStatus={false} showArrows={true} showIndicators={true} stopOnHover={true} transitionTime={100} >
 				<div>
 					<img src={img1} />
 				</div>
