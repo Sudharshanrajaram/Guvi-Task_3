@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'   
+import Home from './Home';
 
 function CartModel({ closeCart,cartItems,cartCount,removeFromCart,setCartItems }) {
     const [total, setTotal] = useState(0);
@@ -9,11 +10,24 @@ function CartModel({ closeCart,cartItems,cartCount,removeFromCart,setCartItems }
         
     },[cartItems]);
    
-    
+    const handleQuantityChange = (id, action) => {
+        const updatedCart = cartItems.map((item) => {
+          if (item.id === id) {
+            const newQuantity =
+              action === "increase" ? item.quantity + 1 : item.quantity - 1;
+            return { ...item, quantity: Math.max(1, newQuantity) }; // Prevent quantity from going below 1
+          }
+          return item;
+        });
+        setCartItems(updatedCart);
+      };
+
     
     
 
   return (
+    <div>
+      
     <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center px-10'>
         <div className='bg-white p-6 rounded-lg w-full px-10 shadow-xl '>
         <div className='absolute right-3/4'><button onClick={closeCart} className='bg-red-400 text-white  px-3 py-1.5 font-semibold rounded-full hover:bg-black hover:text-white'> X </button>
@@ -30,7 +44,20 @@ function CartModel({ closeCart,cartItems,cartCount,removeFromCart,setCartItems }
                             <p className='text-xs pb-2 border-b-2 border-gray-400'>{item.title}</p>
                             <p className='font-bold text-red-500 '>Price : $ {item.price}</p>
                             </div>
+                            <div>
+                            <div className="flex items-center space-x-4 ml-5 mt-5">
+                            <button
+                              onClick={() => handleQuantityChange(item.id, "decrease")}
+                                             className="px-3 py-1 bg-red-300 rounded hover:bg-red-500"> -</button>
+                            <span className="text-lg">{item.quantity}</span>
+                             <button
+                              onClick={() => handleQuantityChange(item.id, "increase")}
+                              className="px-3 py-1 bg-green-300 rounded  hover:bg-green-500"> + </button>
+                              <button onClick={() => removeFromCart(item.id)} className='bg-indigo-500 text-white py-1 px-3 font-bold mt-2 rounded-full hover:bg-red-500 hover:text-white'> X </button>
+                            </div>
+                           
                             
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -42,6 +69,7 @@ function CartModel({ closeCart,cartItems,cartCount,removeFromCart,setCartItems }
             <button className='bg-indigo-600 p-2 md:p-3  text-white rounded-lg font-semibold hover:bg-indigo-700'>Checkout</button>
            </div>
         </div>
+    </div>
     </div>
   )
 }

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
-
+import img1 from "../assets/screenshots/slider1.jpg";
+import img2 from "../assets/screenshots/slider2.jpg";
+import img3 from "../assets/screenshots/slider3.png";
+import Slider from './Slider';
 
 function ProductList({ cartItems, setCartItems }) {
     const [product, setProduct] = useState([]);
@@ -22,11 +25,11 @@ function ProductList({ cartItems, setCartItems }) {
     
   return (
      <div>
-         
+         <Slider /> 
     <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mx-auto px-4 py-4 bg-[#FFE1FF] '>
         {product.map((product) => (
-           <div key={product.id} className='border-2 border-black  p-4 rounded-lg bg-white  '>
-            <img src={product.image} alt={product.title} className='h-44 w-36 md:ml-6 ' />
+           <div key={product.id} className='border-2 border-black  p-4 rounded-lg bg-white hover:transform hover:scale-105 transition-transform duration-300'>
+            <img src={product.image} alt={product.title} className='h-44 w-36 md:ml-6 hover:transform hover:scale-150 transition-transform duration-300 hover:rounded-lg hover:border-2 hover:border-gray-300 hover:p-2' />
             <div className=' '>
             <h2 className=' text-black font-bold mt-2 mb-2'>{product.title}</h2>
             <p className='text-xs h-10 overflow-y-auto border-2  border-gray-400 px-1'>{product.description}</p>
