@@ -42,7 +42,7 @@ function Home({ cartCount }) {
     </nav>
     <Routes>
         <Route path='/' element={<ProductList cartItems={cartItems} setCartItems={setCartItems} />} ></Route>
-        <Route path='/carts' element={<div><ProductList cartItems={cartItems} setCartItems={setCartItems} />{
+        <Route path='/carts' element={<div>{
       isCartOpen && (
         <CartModel cartItems={cartItems} closeCart={closeCart} cartCount={cartItems.length} removeFromCart={removeFromCart} setCartItems={setCartItems}  />
       )
@@ -53,6 +53,7 @@ function Home({ cartCount }) {
         
 
     </Routes>
+    
     </Router>
   )
 }
