@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:2000/api';
+const API_URL = 'https://guvi-task-3-4.onrender.com';
 
 export const registerUser = async (email, password) => {
   const response = await axios.post(`${API_URL}/signup`, { email, password });

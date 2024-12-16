@@ -46,7 +46,7 @@ const resetRequest = async (req, res) => {
     await user.save();
 
     // Send email with the reset link
-    const resetLink = `http://localhost:5173/reset/${resetToken}`;
+    const resetLink = `https://playful-kulfi-cbf752.netlify.app/reset${resetToken}`;
     await transporter.sendMail({
       to: user.email,
       subject: 'Password Reset Request',
