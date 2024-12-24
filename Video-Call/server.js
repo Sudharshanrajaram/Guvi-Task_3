@@ -6,16 +6,12 @@ require("dotenv").config();
 const { Server } = require("socket.io");
 
 const app = express();
-app.use(cors());
-app.use(express.json());
-connectDB();
-
-PORT = 8000;
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
-});
-const io = new Server(server, {
-  cors: true,
+const http = require("http");
+const server = http.createServer(app);
+const io = new Server(process.env.PORT || 5000, {
+  cors: {
+    origin: "*",
+  },
 });
 
 const emailToSocketIdMap = new Map();
