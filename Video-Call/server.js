@@ -1,3 +1,4 @@
+
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -14,6 +15,10 @@ const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
 const io = new Server(server, {
+  cors: {
+    origin: "https://guvi-task-3-6.onrender.com",
+    methods: ["GET", "POST"],
+  },
   cors: true,
 });
 
