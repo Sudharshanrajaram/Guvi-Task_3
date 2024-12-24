@@ -1,18 +1,19 @@
 
+
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 require("dotenv").config();
 const { Server } = require("socket.io");
-const socketIo = require("socket.io");
 
 const app = express();
 const http = require("http");
-const server = http.createServer(app);
-const io = socketIo(server, {
+const io = new Server({
   cors: {
     origin: "*",
+    methods: ["GET", "POST"],
   },
+  cors: true,
 });
 
 const emailToSocketIdMap = new Map();
@@ -47,7 +48,8 @@ io.on("connection", (socket) => {
     io.to(to).emit("peer:nego:final", { from: socket.id, ans });
   });
 });
+PORT = process.env.PORT || 5000;
 
-server.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+io.listen(PORT, () => {
+  console.log("server is running on port " + PORT);
 });
