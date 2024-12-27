@@ -34,18 +34,23 @@ app.get('/oauth', (req, res) => {
 
 // Step 2: OAuth callback, exchange code for access token
 app.get('/oauth/callback', async (req, res) => {
-    const code = req.query.code;
+    
     try {
+      const  code = req.query.code;
+    console.log('Received code:', code);
+    if (!code) {
+      return res.status(400).send('Authorization code is missing.');
+  }
         const response = await axios.post('https://zoom.us/oauth/token', querystring.stringify({
-            
-            code,
-            redirect_uri: zoomRedirectUri,
-        }, {
+          grant_type: 'authorization_code', // Explicitly set the grant type
+          code,
+          redirect_uri: zoomRedirectUri,
+      }), {
             headers: {
                 Authorization: `Basic ${Buffer.from(`${zoomClientId}:${zoomClientSecret}`).toString('base64')}`,
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
-          }));
+          });
         zoomAccessToken = response.data.access_token;
         res.send('Zoom OAuth access token obtained successfully.');
     } catch (error) {
