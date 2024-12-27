@@ -10,11 +10,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 
-const zoomClientId = process.env.ZOOM_CLIENT_ID;
-const zoomClientSecret = process.env.ZOOM_CLIENT_SECRET;
-const zoomRedirectUri = process.env.ZOOM_REDIRECT_URI;
+
 
 let zoomAccessToken = null;
 
@@ -26,31 +24,29 @@ app.get('/', (req, res) => {
 app.get('/oauth', (req, res) => {
     const authUrl = `https://zoom.us/oauth/authorize?${querystring.stringify({
         response_type: 'code',
-        client_id: zoomClientId,
-        redirect_uri: zoomRedirectUri,
+        client_id: process.env.ZOOM_CLIENT_ID,
+        client_secret: process.env.ZOOM_CLIENT_SECRET,
+        redirect_uri: 'http://localhost:5000/oauth/callback',
     })}`;
     res.send(authUrl);
 });
 
 // Step 2: OAuth callback, exchange code for access token
 app.get('/oauth/callback', async (req, res) => {
-    
+  
+  
     try {
-      const  code = req.query.code;
-    console.log('Received code:', code);
-    if (!code) {
-      return res.status(400).send('Authorization code is missing.');
-  }
-        const response = await axios.post('https://zoom.us/oauth/token', querystring.stringify({
-          grant_type: 'authorization_code', // Explicitly set the grant type
-          code,
-          redirect_uri: zoomRedirectUri,
-      }), {
-            headers: {
-                Authorization: `Basic ${Buffer.from(`${zoomClientId}:${zoomClientSecret}`).toString('base64')}`,
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-          });
+      const response = await axios.post('https://zoom.us/oauth/token', {
+            grant_type: 'authorization_code',
+            code: req.query.code,
+            redirect_uri: 'http://localhost:5000/oauth/callback' ,
+        },{
+          headers : {
+            Authorization: `Basic ${Buffer.from(`${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`).toString('base64')}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+        });
+        console.log('Received access token:', response.data.access_token);
         zoomAccessToken = response.data.access_token;
         res.send('Zoom OAuth access token obtained successfully.');
     } catch (error) {
