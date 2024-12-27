@@ -3,16 +3,17 @@ const axios = require('axios');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const querystring = require('querystring');
+const cookieParser = require('cookie-parser');
+
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 const port = process.env.PORT;
-
-
 
 let zoomAccessToken = null;
 
@@ -25,7 +26,6 @@ app.get('/oauth', (req, res) => {
     const authUrl = `https://zoom.us/oauth/authorize?${querystring.stringify({
         response_type: 'code',
         client_id: process.env.ZOOM_CLIENT_ID,
-        client_secret: process.env.ZOOM_CLIENT_SECRET,
         redirect_uri: 'http://localhost:5000/oauth/callback',
     })}`;
     res.send(authUrl);
@@ -33,24 +33,24 @@ app.get('/oauth', (req, res) => {
 
 // Step 2: OAuth callback, exchange code for access token
 app.get('/oauth/callback', async (req, res) => {
-  
-  
+    const code = req.query.code;
     try {
-      const response = await axios.post('https://zoom.us/oauth/token', {
+        const response = await axios.post('https://zoom.us/oauth/token', querystring.stringify({
             grant_type: 'authorization_code',
-            code: req.query.code,
-            redirect_uri: 'http://localhost:5000/oauth/callback' ,
-        },{
-          headers : {
-            Authorization: `Basic ${Buffer.from(`${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`).toString('base64')}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-        }
+            code: code,
+            redirect_uri: 'http://localhost:5000/oauth/callback',
+        }), {
+            headers: {
+                'Authorization': `Basic ${Buffer.from(`${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`).toString('base64')}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
         });
+
         console.log('Received access token:', response.data.access_token);
         zoomAccessToken = response.data.access_token;
-        res.send('Zoom OAuth access token obtained successfully.');
+        res.json({ zoomAccessToken }).json({ message: 'Access token received successfully.' });
     } catch (error) {
-        console.error('Error exchanging code for access token:', error);
+        console.log('Error exchanging code for access token:', error.response ? error.response.data : error.message);
         res.status(500).send('Error exchanging code for access token.');
     }
 });
